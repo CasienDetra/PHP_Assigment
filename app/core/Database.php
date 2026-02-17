@@ -8,7 +8,13 @@ class Database
 
     public function __construct($config, $username = 'root', $password = '')
     {
-        $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['db_name']};charset={$config['charset']}";
+        // use fallback if cannot find
+        $host = $config['host'] ?? '127.0.0.1';
+        $port = $config['port'] ?? '3306';
+        $db_name = $config['db_name'] ?? '';
+        $charset = $config['charset'] ?? 'utf8mb4';
+
+        $dsn = "mysql:host=$host;port=$port;dbname=$db_name;charset=$charset";
 
         try {
             $this->connection = new PDO($dsn, $username, $password, [
