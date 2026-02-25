@@ -13,6 +13,10 @@
             <a href="/" class="brand"> Coffee Phum </a>
             <div class="nav-links">
                 <?php if (isset($_SESSION['user_id'])) { ?>
+                   <?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin') { ?>
+                       <a href="/admin/dashboard" style="padding: 34px">Menu</a>
+                       <a href="/admin/manage-admin" style="padding: 34px">Admins</a>
+                   <?php } ?>
                    <a href="/logout">Logout</a>
                 <?php } ?>
             </div>

@@ -1,9 +1,12 @@
 <?php
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 spl_autoload_register(function ($class) {
-
     $prefix = 'App\\';
-    $base_dir = __DIR__.'/';
+    $base_dir = __DIR__ . '/';
 
     $len = strlen($prefix);
     if (strncmp($prefix, $class, $len) !== 0) {
@@ -11,23 +14,21 @@ spl_autoload_register(function ($class) {
     }
 
     $relative_class = substr($class, $len);
-    $file = $base_dir.str_replace('\\', '/', $relative_class).'.php';
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
 
     if (file_exists($file)) {
         require $file;
-    } else {
-        if (file_exists(__DIR__.'/core/'.$class.'.php')) {
-            require __DIR__.'/core/'.$class.'.php';
-
-            return;
-        }
     }
 });
 
 $config = require 'config.php';
 
-require 'core/Database.php';
-require 'core/Router.php';
+// Load Core Classes (Namespaced)
+require 'Core/Database.php';
+require 'Core/Router.php';
+
+use App\Core\Database;
+use App\Core\Router;
 
 class App
 {
@@ -55,30 +56,38 @@ App::bind('database', new Database(
     $config['database']['password']
 ));
 
-// Helper to view
 function view($name, $data = [])
 {
     extract($data);
-
+    // Path: views/admin/dashboard.view.php
     return require "views/{$name}.view.php";
 }
 
 // Redirect helper
 function redirect($path)
 {
-    header("Location: /{$path}");
+    // Ensure absolute path for redirect
+    $base = trim(str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']), '/');
+    $path = trim($path, '/');
+    $location = $base ? "/{$base}/{$path}" : "/{$path}";
+    header("Location: {$location}");
     exit();
 }
 
+// Router initialization
 $router = Router::load('routes.php');
 
-$uri = trim($_SERVER['REQUEST_URI'], '/');
-$uri = parse_url($uri, PHP_URL_PATH);
-$uri = trim($uri, '/');
+// Robust URI identification
+$uri = $_SERVER['REQUEST_URI'];
+$basePath = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
+if ($basePath !== '/' && strpos($uri, $basePath) === 0) {
+    $uri = substr($uri, strlen($basePath));
+}
+$uri = trim(parse_url($uri, PHP_URL_PATH), '/');
 $method = $_SERVER['REQUEST_METHOD'];
 
 try {
     $router->direct($uri, $method);
 } catch (Exception $e) {
-    exit($e->getMessage());
+    die($e->getMessage());
 }
