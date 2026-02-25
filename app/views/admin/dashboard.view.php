@@ -32,7 +32,8 @@
                 <td>$<?= number_format($item['price_usd'], 2) ?></td>
                 <td>៛<?= number_format($item['price_khr'], 0) ?></td>
                 <td>
-                    <form action="/admin/menu/delete" method="POST" onsubmit="return confirm('Are you sure?');">
+                    <a href="/admin/menu/edit?id=<?= $item['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+                    <form action="/admin/menu/delete" method="POST" onsubmit="return confirm('Are you sure?');" style="display: inline-block;">
                         <input type="hidden" name="id" value="<?= $item['id'] ?>">
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>

@@ -1,4 +1,4 @@
-<?php require('views/partials/head.php'); ?>
+<?php require 'views/partials/head.php'; ?>
 
 <div class="header-with-back">
     <a href="/admin/dashboard" class="back-link">← Back to Dashboard</a>
@@ -14,11 +14,14 @@
 
         <div class="form-group">
             <label>Category</label>
+              <div class="header-with-back">
+                <a href="/admin/dashboard" class="back-link">Add New Category</a>
+              </div>
             <select name="category" required>
-                <option value="Coffee">Coffee</option>
-                <option value="Non-Coffee">Non-Coffee</option>
-                <option value="Food">Food</option>
-                <option value="Dessert">Dessert</option>
+                <option value="Coffee"> Coffee</option>
+                <option value="Non-Coffee"> Non-Coffee</option>
+                <option value="Food"> Food</option>
+                <option value="Dessert"> Dessert</option>
             </select>
         </div>
 
@@ -42,4 +45,4 @@
     </form>
 </div>
 
-<?php require('views/partials/footer.php'); ?>
+<?php require 'views/partials/footer.php'; ?>
