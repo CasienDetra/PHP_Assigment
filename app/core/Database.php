@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Core;
+
+use mysqli;
+
 class Database
 {
     public $connection;

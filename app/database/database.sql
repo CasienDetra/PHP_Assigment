@@ -23,7 +23,6 @@ CREATE TABLE `admin_users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Password is 'admin1234'
 INSERT INTO `admin_users` (`email`, `password_hash`, `name`) VALUES
 ('admin@coffeeshop.com', '$2y$10$u/ERjvS5U/sZedD4TOf/uOSTKTRyzr/iRUeHsD5hi31lUsVxZ3tge', 'Shop Manager');
 
@@ -44,7 +43,6 @@ CREATE TABLE `staff` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Example Staff (Password is 'staff1234')
 INSERT INTO `staff` (`username`, `password_hash`, `full_name`, `role`, `phone`) VALUES
 ('sokha_barista', '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', 'Sokha Mean', 'Barista', '012345678');
 
