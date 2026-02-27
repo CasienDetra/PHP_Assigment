@@ -1,7 +1,40 @@
 <?php require('views/partials/head.php'); ?>
 
+<!-- Cart Backdrop Overlay -->
+<div class="cart-backdrop" id="cart-backdrop" onclick="toggleCart()"></div>
+
+<!-- Toast Notification -->
+<div class="toast-notification" id="toast-notification">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span>Item added to cart!</span>
+</div>
+
+<!-- Floating Cart Icon for Mobile -->
+<div class="cart-icon-float" onclick="toggleCart()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+    </svg>
+    <span class="cart-badge" id="cart-badge">0</span>
+</div>
+
 <div class="pos-container">
     <div class="menu-section">
+        <div class="menu-header">
+            <h2>Menu Items</h2>
+            <button class="view-cart-btn" onclick="toggleCart()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <span>View Cart</span>
+                <span class="cart-header-badge" id="cart-header-badge">0</span>
+            </button>
+        </div>
         <div class="category-tabs">
             <button class="cat-btn active" onclick="filterCategory('all')">All</button>
             <?php foreach(array_keys($menu) as $cat): ?>
@@ -29,8 +62,11 @@
         </div>
     </div>
 
-    <div class="cart-section">
-        <h3>Current Order</h3>
+    <div class="cart-section" id="cart-section">
+        <div class="cart-header">
+            <h3>Current Order</h3>
+            <button class="close-cart-btn" onclick="toggleCart()">&times;</button>
+        </div>
         <div class="order-type-selector">
             <label><input type="radio" name="orderType" value="Dine-in" checked> Dine-in</label>
             <label><input type="radio" name="orderType" value="Takeaway"> Takeaway</label>
@@ -89,6 +125,21 @@
 <script>
 let cart = [];
 
+function toggleCart() {
+    const cartSection = document.getElementById('cart-section');
+    const backdrop = document.getElementById('cart-backdrop');
+    
+    cartSection.classList.toggle('active');
+    backdrop.classList.toggle('active');
+    
+    // Prevent body scroll when cart is open on mobile
+    if (cartSection.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
+}
+
 function addToCart(item) {
     const existing = cart.find(i => i.id === item.id);
     if (existing) {
@@ -97,6 +148,31 @@ function addToCart(item) {
         cart.push({...item, qty: 1});
     }
     updateCartUI();
+    
+    // Show notification toast
+    showToast();
+    
+    // Animate cart icon
+    showCartNotification();
+}
+
+function showToast() {
+    const toast = document.getElementById('toast-notification');
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2000);
+}
+
+function showCartNotification() {
+    const floatIcon = document.querySelector('.cart-icon-float');
+    if (floatIcon && window.getComputedStyle(floatIcon).display !== 'none') {
+        floatIcon.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+            floatIcon.style.transform = 'scale(1)';
+        }, 200);
+    }
 }
 
 function removeFromCart(id) {
@@ -116,6 +192,22 @@ function updateQty(id, change) {
 function updateCartUI() {
     const container = document.getElementById('cart-items');
     container.innerHTML = '';
+    
+    // Update cart badges
+    const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+    document.getElementById('cart-badge').innerText = totalItems;
+    
+    // Update navigation cart badge if exists
+    const navBadge = document.getElementById('cart-nav-badge');
+    if (navBadge) {
+        navBadge.innerText = totalItems;
+    }
+    
+    // Update header cart badge if exists
+    const headerBadge = document.getElementById('cart-header-badge');
+    if (headerBadge) {
+        headerBadge.innerText = totalItems;
+    }
     
     if (cart.length === 0) {
         container.innerHTML = '<p class="empty-cart-msg">No items yet</p>';
