@@ -4,20 +4,14 @@
 <div class="cart-backdrop" id="cart-backdrop" onclick="toggleCart()"></div>
 
 <!-- Toast Notification -->
-<div class="toast-notification" id="toast-notification">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"></polyline>
-    </svg>
+<div class="toast-notification" id="toast-notification" style="position: fixed; top: 80px; right: 20px; background: #10b981; color: white; padding: 10px 16px; border-radius: 6px; display: none; align-items: center; gap: 6px; z-index: 1000; font-family: 'Outfit', sans-serif; box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: slideIn 0.3s ease; font-size: 0.9rem;">
+    <span style="font-size: 1.1rem;">✓</span>
     <span>Item added to cart!</span>
 </div>
 
 <!-- Floating Cart Icon for Mobile -->
 <div class="cart-icon-float" onclick="toggleCart()">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="9" cy="21" r="1"></circle>
-        <circle cx="20" cy="21" r="1"></circle>
-        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-    </svg>
+    <span style="font-weight: 600; font-size: 0.9rem;">Cart</span>
     <span class="cart-badge" id="cart-badge">0</span>
 </div>
 
@@ -26,11 +20,6 @@
         <div class="menu-header">
             <h2>Menu Items</h2>
             <button class="view-cart-btn" onclick="toggleCart()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                </svg>
                 <span>View Cart</span>
                 <span class="cart-header-badge" id="cart-header-badge">0</span>
             </button>
@@ -129,6 +118,11 @@ function toggleCart() {
     const cartSection = document.getElementById('cart-section');
     const backdrop = document.getElementById('cart-backdrop');
     
+    if (!cartSection || !backdrop) {
+        console.error('Cart elements not found');
+        return;
+    }
+    
     cartSection.classList.toggle('active');
     backdrop.classList.toggle('active');
     
@@ -139,6 +133,9 @@ function toggleCart() {
         document.body.style.overflow = '';
     }
 }
+
+// Make toggleCart globally accessible
+window.toggleCart = toggleCart;
 
 function addToCart(item) {
     const existing = cart.find(i => i.id === item.id);
@@ -158,10 +155,17 @@ function addToCart(item) {
 
 function showToast() {
     const toast = document.getElementById('toast-notification');
+    if (!toast) return;
+    
+    // Force inline display for better compatibility
+    toast.style.display = 'flex';
     toast.classList.add('show');
     
     setTimeout(() => {
         toast.classList.remove('show');
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 300);
     }, 2000);
 }
 
@@ -249,7 +253,7 @@ function filterCategory(cat) {
     
     document.querySelectorAll('.menu-item-card').forEach(card => {
         if (cat === 'all' || card.dataset.category === cat) {
-            card.style.display = 'flex';
+            card.style.display = 'block';
         } else {
             card.style.display = 'none';
         }
@@ -345,6 +349,21 @@ function printReceipt() {
         link.click();
     });
 }
+
+// Initialize on DOM load
+document.addEventListener('DOMContentLoaded', function() {
+    // Verify critical elements exist
+    const criticalElements = ['cart-section', 'cart-backdrop', 'toast-notification', 'cart-badge', 'cart-header-badge', 'cart-nav-badge'];
+    criticalElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) {
+            console.warn('Missing element:', id);
+        }
+    });
+    
+    // Initialize cart UI
+    updateCartUI();
+});
 </script>
 
 <?php require('views/partials/footer.php'); ?>
