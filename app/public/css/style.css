@@ -189,10 +189,6 @@ a { text-decoration: none; color: inherit; }
     box-shadow: 0 4px 12px rgba(192, 120, 72, 0.3);
 }
 
-.view-cart-btn svg {
-    color: white;
-}
-
 .cart-header-badge {
     background: var(--danger);
     color: white;
@@ -481,23 +477,20 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 8px;
+    padding: 8px 12px;
     border-radius: 8px;
     transition: background 0.3s ease;
+    font-weight: 500;
 }
 
 .cart-nav-link:hover {
     background: rgba(192, 120, 72, 0.1);
 }
 
-.cart-nav-link svg {
-    color: var(--primary);
-}
-
 .cart-nav-badge {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 2px;
+    right: 2px;
     background: var(--danger);
     color: white;
     width: 18px;
@@ -524,8 +517,8 @@ a { text-decoration: none; color: inherit; }
     position: fixed;
     bottom: 30px;
     right: 30px;
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     background: var(--primary);
     border-radius: 50%;
     box-shadow: 0 4px 20px rgba(192, 120, 72, 0.4);
@@ -534,6 +527,8 @@ a { text-decoration: none; color: inherit; }
     align-items: center;
     justify-content: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: white;
+    flex-direction: column;
 }
 
 .cart-icon-float:hover {
@@ -545,16 +540,10 @@ a { text-decoration: none; color: inherit; }
     transform: scale(0.95);
 }
 
-.cart-icon-float svg {
-    width: 28px;
-    height: 28px;
-    color: white;
-}
-
 .cart-badge {
     position: absolute;
-    top: -5px;
-    right: -5px;
+    top: 5px;
+    right: 5px;
     background: var(--danger);
     color: white;
     width: 24px;
@@ -605,10 +594,9 @@ a { text-decoration: none; color: inherit; }
     transform: translateX(0);
 }
 
-.toast-notification svg {
-    width: 20px;
-    height: 20px;
-    stroke: white;
+.toast-notification span:first-child {
+    font-weight: bold;
+    font-size: 1.2rem;
 }
 
 /* Responsive Mobile View */
@@ -620,6 +608,22 @@ a { text-decoration: none; color: inherit; }
     .cart-section {
         width: 85%;
         max-width: 400px;
+    }
+    
+    /* Smaller toast notification on mobile */
+    .toast-notification {
+      display : none !important;
+        top: 70px !important;
+        right: 10px !important;
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+        gap: 6px !important;
+        border-radius: 6px !important;
+        max-width: calc(100vw - 20px);
+    }
+    
+    .toast-notification span:first-child {
+        font-size: 1rem !important;
     }
 }
 
