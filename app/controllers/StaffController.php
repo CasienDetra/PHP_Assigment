@@ -83,4 +83,44 @@ class StaffController
         ]);
         exit;
     }
+
+    public function viewOrders()
+    {
+        // Get all orders with staff info
+        $orders = $this->db->query("
+            SELECT o.*, s.full_name as staff_name 
+            FROM orders o 
+            LEFT JOIN staff s ON o.staff_id = s.id 
+            ORDER BY o.created_at DESC
+        ")->get();
+        
+        return view('staff/orders', ['orders' => $orders]);
+    }
+
+    public function viewOrderDetails()
+    {
+        $order_id = $_GET['id'];
+        
+        // Get order info
+        $order = $this->db->query("
+            SELECT o.*, s.full_name as staff_name 
+            FROM orders o 
+            LEFT JOIN staff s ON o.staff_id = s.id 
+            WHERE o.id = ?
+        ", [$order_id])->find();
+        
+        if (!$order) {
+            return redirect('staff/orders');
+        }
+        
+        // Get order items
+        $items = $this->db->query("
+            SELECT oi.*, m.name as item_name, m.image_path
+            FROM order_items oi
+            LEFT JOIN menu_items m ON oi.menu_item_id = m.id
+            WHERE oi.order_id = ?
+        ", [$order_id])->get();
+        
+        return view('staff/order_details', ['order' => $order, 'items' => $items]);
+    }
 }

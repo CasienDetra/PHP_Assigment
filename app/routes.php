@@ -22,6 +22,18 @@ $router->get('admin/admins/edit', 'AdminController@editAdmin');
 $router->post('admin/admins/update', 'AdminController@updateAdmin');
 $router->post('admin/admins/delete', 'AdminController@deleteAdmin');
 
+// Admin Staff Management
+$router->get('admin/manage-staff', 'AdminController@manageStaff');
+$router->get('admin/staff/create', 'AdminController@createStaff');
+$router->post('admin/staff/store', 'AdminController@storeStaff');
+$router->get('admin/staff/edit', 'AdminController@editStaff');
+$router->post('admin/staff/update', 'AdminController@updateStaff');
+$router->post('admin/staff/delete', 'AdminController@deleteStaff');
+$router->post('admin/staff/toggle-status', 'AdminController@toggleStaffStatus');
+
 // Staff
 $router->get('staff/pos', 'StaffController@index');
 $router->post('staff/order', 'StaffController@storeOrder');
+$router->get('staff/orders', 'StaffController@viewOrders');
+$router->get('staff/orders/view', 'StaffController@viewOrderDetails');
+

@@ -234,4 +234,105 @@ class AdminController
         $this->db->query("DELETE FROM admin_users WHERE id = ?", [$id]);
         return redirect('admin/manage-admins');
     }
+
+    // Staff user management
+    public function manageStaff()
+    {
+        $staff = $this->db->query("SELECT * FROM staff ORDER BY created_at DESC")->get();
+        return view('admin/manage_staff', ['staff' => $staff]);
+    }
+
+    public function createStaff()
+    {
+        return view('admin/create_staff');
+    }
+
+    public function storeStaff()
+    {
+        $username = $_POST['username'];
+        $full_name = $_POST['full_name'];
+        $role = $_POST['role'];
+        $phone = $_POST['phone'];
+        $password = $_POST['password'];
+        $is_active = isset($_POST['is_active']) ? 1 : 0;
+        
+        // Check if username already exists
+        $existing = $this->db->query("SELECT * FROM staff WHERE username = ?", [$username])->find();
+        if ($existing) {
+            die('Username already exists');
+        }
+        
+        $password_hash = password_hash($password, PASSWORD_BCRYPT);
+        
+        $this->db->query(
+            "INSERT INTO staff (username, password_hash, full_name, role, phone, is_active) VALUES (?, ?, ?, ?, ?, ?)",
+            [$username, $password_hash, $full_name, $role, $phone, $is_active]
+        );
+
+        return redirect('admin/manage-staff');
+    }
+
+    public function editStaff()
+    {
+        $id = $_GET['id'];
+        $staff = $this->db->query("SELECT * FROM staff WHERE id = ?", [$id])->find();
+        
+        if (!$staff) {
+            return redirect('admin/manage-staff');
+        }
+        
+        return view('admin/edit_staff', ['staff' => $staff]);
+    }
+
+    public function updateStaff()
+    {
+        $id = $_POST['id'];
+        $username = $_POST['username'];
+        $full_name = $_POST['full_name'];
+        $role = $_POST['role'];
+        $phone = $_POST['phone'];
+        $is_active = isset($_POST['is_active']) ? 1 : 0;
+        
+        // Check if username already exists for another staff
+        $existing = $this->db->query("SELECT * FROM staff WHERE username = ? AND id != ?", [$username, $id])->find();
+        if ($existing) {
+            die('Username already exists');
+        }
+        
+        // Update password if provided
+        if (!empty($_POST['password'])) {
+            $password_hash = password_hash($_POST['password'], PASSWORD_BCRYPT);
+            $this->db->query(
+                "UPDATE staff SET username = ?, full_name = ?, role = ?, phone = ?, is_active = ?, password_hash = ? WHERE id = ?",
+                [$username, $full_name, $role, $phone, $is_active, $password_hash, $id]
+            );
+        } else {
+            $this->db->query(
+                "UPDATE staff SET username = ?, full_name = ?, role = ?, phone = ?, is_active = ? WHERE id = ?",
+                [$username, $full_name, $role, $phone, $is_active, $id]
+            );
+        }
+
+        return redirect('admin/manage-staff');
+    }
+
+    public function deleteStaff()
+    {
+        $id = $_POST['id'];
+        $this->db->query("DELETE FROM staff WHERE id = ?", [$id]);
+        return redirect('admin/manage-staff');
+    }
+
+    public function toggleStaffStatus()
+    {
+        $id = $_POST['id'];
+        $staff = $this->db->query("SELECT is_active FROM staff WHERE id = ?", [$id])->find();
+        
+        if ($staff) {
+            $new_status = $staff['is_active'] ? 0 : 1;
+            $this->db->query("UPDATE staff SET is_active = ? WHERE id = ?", [$new_status, $id]);
+        }
+        
+        return redirect('admin/manage-staff');
+    }
 }
